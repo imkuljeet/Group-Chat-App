@@ -1,4 +1,5 @@
 const User = require("../models/users");
+const bcrypt = require('bcrypt');
 
 function isStringInvalid(string) {
   if (string === undefined || string.length === 0) {
@@ -33,9 +34,16 @@ const signup = async (req, res, next) => {
       return res.status(400).json({ message : "User already exists" });
     }
 
-    
-    await User.create({ name, email, phone, password });
-    res.status(201).json({ message: "Successfully Created New User" });
+    const saltrounds = 10;
+    bcrypt.hash(password, saltrounds, async(err,hash)=>{
+      console.log("If any error in Hashing>>",err);
+
+
+      await User.create({ name, email, phone, password: hash });
+      res.status(201).json({ message: "Successfully Created New User" });
+
+    });
+
   } catch (err) {
     console.log(err);
 
