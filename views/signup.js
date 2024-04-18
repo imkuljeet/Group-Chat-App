@@ -24,7 +24,13 @@ async function signup(e) {
   
       let errorDiv = document.createElement('div');
       errorDiv.style.color = 'red';
-      errorDiv.textContent = err.message || "An error occurred. Please try again.";
+
+      if (err.response && err.response.status === 400) {
+        errorDiv.textContent = err.response.data.message;
+      } else {
+        errorDiv.textContent = err.message || "An error occurred. Please try again.";
+      }
+
       document.body.appendChild(errorDiv);
     }
   }

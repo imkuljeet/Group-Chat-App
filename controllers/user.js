@@ -24,6 +24,16 @@ const signup = async (req, res, next) => {
         .json({ err: "Bad Parameters, Something is missing" });
     }
 
+    const existingUser = await User.findOne({
+      where: {
+        email: email
+      }
+    });
+    if (existingUser) {
+      return res.status(400).json({ message : "User already exists" });
+    }
+
+    
     await User.create({ name, email, phone, password });
     res.status(201).json({ message: "Successfully Created New User" });
   } catch (err) {
