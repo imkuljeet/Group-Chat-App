@@ -4,6 +4,7 @@ const cors = require("cors");
 
 const sequelize = require("./util/database");
 const User = require("./models/users");
+const Message = require('./models/messages');
 const userController = require("./controllers/user");
 const userRoutes = require("./routes/user");
 
@@ -18,6 +19,9 @@ app.use(cors({
 app.use(bodyParser.json());
 
 app.use('/user', userRoutes);
+
+User.hasMany(Message);
+Message.belongsTo(User);
 
 
 sequelize

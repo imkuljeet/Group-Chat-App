@@ -10,9 +10,18 @@ async function login(e){
         console.log(loginDetails);
 
         const response = await axios.post('http://localhost:3000/user/login',loginDetails);
-        alert('User Logged in Successfully');
 
+        console.log(response);
 
+        if(response.status == 200) {
+            alert(response.data.message);
+            localStorage.setItem('token',response.data.token);
+            window.location.href = "./chatApp.html";
+
+        }
+        else{
+            throw new Error ("Failed To Login, Try Again!")
+        }
 
     }catch(err){
         console.log(err);
