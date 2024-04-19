@@ -1,7 +1,7 @@
 const msgInput = document.getElementById('chat');
 const token = localStorage.getItem('token');
 
-myForm.addEventListener('submit', onSubmit);
+//myForm.addEventListener('submit', onSubmit);
 
 document.getElementById("msgSent").onclick = async function(event) {
     event.preventDefault();
