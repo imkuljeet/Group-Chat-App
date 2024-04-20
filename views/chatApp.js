@@ -31,7 +31,7 @@ window.addEventListener("DOMContentLoaded", () => {
 })
 
 function showMessage(message, user) {
-    console.log(user);
+    console.log("User is>>>>",user);
     const parentitem = document.getElementById("listOfMessages");
     for(let i = 0; i < message.length; i++) {
         const childitem = document.createElement("li");
