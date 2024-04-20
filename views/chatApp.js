@@ -20,15 +20,34 @@ document.getElementById("msgSent").onclick = async function(event) {
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-    const token  = localStorage.getItem('token');
-    console.log("token is >>>>",token);
-    axios.get(`http://localhost:3000/user/get-message`, {headers: {"Authorization":token}})
-    .then((response) => {
-        console.log("Response from domcontent get msg is >>",response);
-        showMessage(response.data.allMessages);
-    })
-    .catch((err) => {console.log(err)});
-})
+    const token = localStorage.getItem('token');
+    console.log("token is >>>>", token);
+
+    // Function to fetch messages and update the screen
+    const fetchMessagesAndUpdate = () => {
+        axios.get(`http://localhost:3000/user/get-message`, { headers: { "Authorization": token } })
+            .then((response) => {
+                console.log("Response from domcontent get msg is >>", response);
+                clearMessages(); // Clear existing messages
+                showMessage(response.data.allMessages); // Show new messages
+            })
+            .catch((err) => { console.log(err) });
+    };
+
+    // Call the API initially
+    fetchMessagesAndUpdate();
+
+    // Continuously call the API every 1 second
+    setInterval(fetchMessagesAndUpdate, 1000);
+
+    // Function to clear existing messages
+    const clearMessages = () => {
+        const messageContainer = document.getElementById('listOfMessages');
+        messageContainer.innerHTML = ''; // Clear the container
+    };
+
+});
+
 
 function showMessage(message) {
     const parentitem = document.getElementById("listOfMessages");
