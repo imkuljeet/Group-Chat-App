@@ -7,7 +7,8 @@ const authorization = require('../middleware/auth');
 
 router.post('/signup', userController.signup);
 router.post('/login',userController.login);
-router.post('/message', authorization.authenticate, msgController.postMessage)
+router.post('/message', authorization.authenticate, msgController.postMessage);
+router.get('/get-message', authorization.authenticate, msgController.getMessage);
 
 
 module.exports = router;

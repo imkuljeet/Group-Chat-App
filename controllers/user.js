@@ -10,8 +10,8 @@ function isStringInvalid(string) {
   }
 }
 
-const generateAccessToken = ( id, name )=>{
-  return jwt.sign({ id, name}, 'secretkey');
+function generateAccessToken(id, name) {
+  return jwt.sign({userId: id, name}, 'secretkey');
 }
 
 const signup = async (req, res, next) => {
@@ -63,8 +63,6 @@ const login = async (req, res, next) => {
     if (isStringInvalid(email) || isStringInvalid(password)) {
       return res.status(400).json({ success: false, message: 'Email or Password is missing' });
     }
-
-    // console.log('Password is>>', password);
 
     const user = await User.findAll({ where: { email } });
 
