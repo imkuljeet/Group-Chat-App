@@ -7,10 +7,10 @@ document.getElementById("msgSent").onclick = async function(event) {
     const inputData = {
         message
     }
-    console.log(inputData);
+    // console.log(inputData);
     await axios.post("http://localhost:3000/user/message", inputData, {headers: {"Authorization": token}})
     .then((response) => {
-        console.log(response);
+        // console.log(response);
         localStorage.setItem('token', response.data.token);
     })
     .catch((err) => {
@@ -19,43 +19,89 @@ document.getElementById("msgSent").onclick = async function(event) {
     msgInput.value = '';
 }
 
+// window.addEventListener("DOMContentLoaded", () => {
+//     const token = localStorage.getItem('token');
+//     // console.log("token is >>>>", token);
+
+//     // Function to fetch messages and update the screen
+//     const fetchMessagesAndUpdate = () => {
+//         axios.get(`http://localhost:3000/user/get-message`, { headers: { "Authorization": token } })
+//             .then((response) => {
+//                 // console.log("Response from domcontent get msg is >>", response);
+//                 clearMessages(); // Clear existing messages
+//                 // showMessage(response.data.allMessages); // Show new messages
+
+//                 localStorage.setItem('allMessages', JSON.stringify(response.data.allMessages));
+//             })
+//             .catch((err) => { console.log(err) });
+//     };
+
+//      // Function to read messages from local storage and display them
+//      const readMessagesFromLocalStorage = () => {
+//         const storedMessages = localStorage.getItem('allMessages');
+//         if (storedMessages) {
+//             const parsedMessages = JSON.parse(storedMessages);
+//             // console.log("Parsed messages are>>>>",parsedMessages);
+//             showMessage(parsedMessages);
+//         }
+//     };
+
+//     // Call the API initially
+//     fetchMessagesAndUpdate();
+
+//     // Read messages from local storage when the page is refreshed
+//     readMessagesFromLocalStorage();
+
+//     // Continuously call the API every 1 second
+//     // setInterval(fetchMessagesAndUpdate, 1000);
+
+//     // Function to clear existing messages
+//     const clearMessages = () => {
+//         const messageContainer = document.getElementById('listOfMessages');
+//         messageContainer.innerHTML = ''; // Clear the container
+//     };
+
+// });
+
 window.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem('token');
-    console.log("token is >>>>", token);
 
-    // Function to fetch messages and update the screen
-    const fetchMessagesAndUpdate = () => {
-        axios.get(`http://localhost:3000/user/get-message`, { headers: { "Authorization": token } })
-            .then((response) => {
-                console.log("Response from domcontent get msg is >>", response);
-                clearMessages(); // Clear existing messages
-                showMessage(response.data.allMessages); // Show new messages
-            })
-            .catch((err) => { console.log(err) });
+    // Function to read messages from local storage and display them
+    const readMessagesFromLocalStorage = () => {
+        const storedMessages = localStorage.getItem('allMessages');
+        if (storedMessages) {
+            const parsedMessages = JSON.parse(storedMessages);
+            showMessage(parsedMessages);
+        }
     };
 
-    // Call the API initially
-    fetchMessagesAndUpdate();
+    // Read messages from local storage when the page is refreshed
+    readMessagesFromLocalStorage();
 
-    // Continuously call the API every 1 second
-    setInterval(fetchMessagesAndUpdate, 1000);
+    function showMessage(messages) {
+        const parentElement = document.getElementById("listOfMessages");
+        if (!parentElement) {
+            console.error("Parent element not found.");
+            return;
+        }
 
-    // Function to clear existing messages
-    const clearMessages = () => {
-        const messageContainer = document.getElementById('listOfMessages');
-        messageContainer.innerHTML = ''; // Clear the container
-    };
-
+        messages.forEach((message) => {
+            const listItem = document.createElement("li");
+            listItem.className = "list-group-item";
+            listItem.textContent = message.user.name + ": " + message.message;
+            parentElement.appendChild(listItem);
+        });
+    }
 });
 
 
-function showMessage(message) {
-    const parentitem = document.getElementById("listOfMessages");
-    for(let i = 0; i < message.length; i++) {
-        console.log("messages are >>>",message[i]);
-        const childitem = document.createElement("li");
-        childitem.className = "list-group-item";
-        childitem.textContent = message[i].user.name + ":" + message[i].message;
-        parentitem.appendChild(childitem);
-    }
-}
+// function showMessage(message) {
+//     const parentitem = document.getElementById("listOfMessages");
+//     for(let i = 0; i < message.length; i++) {
+//         // console.log("messages are >>>",message[i]);
+//         const childitem = document.createElement("li");
+//         childitem.className = "list-group-item";
+//         childitem.textContent = message[i].user.name + ":" + message[i].message;
+//         parentitem.appendChild(childitem);
+//     }
+// }
