@@ -25,18 +25,18 @@ window.addEventListener("DOMContentLoaded", () => {
     axios.get(`http://localhost:3000/user/get-message`, {headers: {"Authorization":token}})
     .then((response) => {
         console.log("Response from domcontent get msg is >>",response);
-        showMessage(response.data.allMessages, response.data.user);
+        showMessage(response.data.allMessages);
     })
     .catch((err) => {console.log(err)});
 })
 
-function showMessage(message, user) {
-    console.log("User is>>>>",user);
+function showMessage(message) {
     const parentitem = document.getElementById("listOfMessages");
     for(let i = 0; i < message.length; i++) {
+        console.log("messages are >>>",message[i]);
         const childitem = document.createElement("li");
         childitem.className = "list-group-item";
-        childitem.textContent = user.name + ":" + message[i].message;
+        childitem.textContent = message[i].user.name + ":" + message[i].message;
         parentitem.appendChild(childitem);
     }
 }

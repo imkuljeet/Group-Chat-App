@@ -32,17 +32,18 @@ exports.getMessage = async (req, res, next) => {
             throw new Error('User ID not available in request');
         }
 
-        const messages = await Message.findAll();
+        const messages = await Message.findAll({
+            include: [{
+              model: User,
+              attributes: ['name']
+            }]
+          })
 
-        const user = await User.findByPk(req.user.id);
-
-        if (!user || !messages) {
-            throw new Error('User or messages not found');
-        }
-
-        res.status(200).json({ allMessages: messages, user: user, success: true });
+        res.status(200).json({ allMessages: messages, success: true });
     } catch (err) {
         console.log('Failed to get messages', err);
         res.status(500).json({ error: err.message, success: false });
     }
 };
+
+
