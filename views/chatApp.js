@@ -39,6 +39,13 @@ window.addEventListener("DOMContentLoaded", () => {
             let oldMessagesAll = JSON.parse(localStorage.getItem('allMessages')) || [];
 
             let mergedMessages = [...oldMessagesAll, ...newMessagesAll];
+
+            // Check if mergedMessages length exceeds 1000 and remove the first few messages
+            if (mergedMessages.length > 6) {
+                const messagesToRemove = mergedMessages.length - 6;
+                mergedMessages.splice(0, messagesToRemove);
+            }
+
             console.log("Merged Messages are>>>", mergedMessages);
             const lastMessageId = mergedMessages.length > 0 ? mergedMessages[mergedMessages.length - 1].id : null;
             localStorage.setItem('lastMessageId', lastMessageId);
