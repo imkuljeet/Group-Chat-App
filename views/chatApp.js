@@ -71,6 +71,8 @@ window.addEventListener("DOMContentLoaded", () => {
         const storedMessages = localStorage.getItem('allMessages');
         if (storedMessages) {
             const parsedMessages = JSON.parse(storedMessages);
+            const lastMessageId = parsedMessages.length > 0 ? parsedMessages[parsedMessages.length - 1].id : null;
+            localStorage.setItem('lastMessageId', lastMessageId);
             showMessage(parsedMessages);
         }
     };
@@ -80,11 +82,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
     function showMessage(messages) {
         const parentElement = document.getElementById("listOfMessages");
-        if (!parentElement) {
-            console.error("Parent element not found.");
-            return;
-        }
-
+       
         messages.forEach((message) => {
             const listItem = document.createElement("li");
             listItem.className = "list-group-item";
