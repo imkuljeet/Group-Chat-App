@@ -77,5 +77,37 @@ exports.getMessageNew = async (req, res) => {
     }
 };
 
+exports.getOlderMessages = async (req, res) => {
+    try {
+        const firstMessageId = req.query.firstMessageId; // Extract firstMessageId from request query params
+        if (!firstMessageId) {
+            return res.status(400).json({ error: 'firstMessageId is required in query params' });
+        }
+
+        // Query messages from the Message table where id is less than firstMessageId
+        const messages = await Message.findAll({
+            where: {
+                id: {
+                    [Sequelize.Op.lt]: firstMessageId
+                }
+            },
+            include: [
+                {
+                    model: User,
+                    attributes: ['name']
+                }
+            ],
+            order: [['id', 'ASC']], // Order by id in descending order to get older messages
+            limit: 10 // Limit the number of older messages to fetch
+        });
+        
+        // Send the queried older messages as a response
+        res.status(200).json({ olderMessages: messages, success: true });
+    } catch (err) {
+        console.log('Failed to get older messages', err);
+        res.status(500).json({ error: err.message, success: false });
+    }
+};
+
 
 

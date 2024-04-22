@@ -10,6 +10,6 @@ router.post('/login',userController.login);
 router.post('/message', authorization.authenticate, msgController.postMessage);
 router.get('/get-message', authorization.authenticate, msgController.getMessage);
 router.get('/get-message-new',authorization.authenticate,msgController.getMessageNew);
-
+router.get('/get-older-messages',authorization.authenticate,msgController.getOlderMessages);
 
 module.exports = router;

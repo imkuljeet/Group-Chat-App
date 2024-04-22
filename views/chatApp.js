@@ -69,6 +69,42 @@ window.addEventListener("DOMContentLoaded", () => {
             parentElement.appendChild(listItem);
         });
     }
+
+    // Event listener for the "Load Older Messages" button
+    const loadOlderMessagesBtn = document.getElementById('loadOlderMessagesBtn');
+    
+    loadOlderMessagesBtn.addEventListener('click', async () => {
+        try {
+            const oldMessagesAll = JSON.parse(localStorage.getItem('allMessages')) || [];
+            const firstMessageId = oldMessagesAll.length > 0 ? oldMessagesAll[0].id : null;
+    
+            if (firstMessageId !== null) {
+                const response = await axios.get(`http://localhost:3000/user/get-older-messages?firstMessageId=${firstMessageId}`, { headers: { "Authorization": token } });
+                const olderMessages = response.data.olderMessages;
+    
+                if (Array.isArray(olderMessages) && olderMessages.length > 0) {
+                    showMessage(olderMessages);
+                } else {
+                    console.log('No older messages found.');
+                }
+            } else {
+                console.log('No messages in localStorage.');
+            }
+        } catch (error) {
+            console.error('Error fetching or processing older messages:', error);
+        }
+    });
+    
+    // Check if button should be displayed based on message count
+    const checkLoadOlderMessagesBtn = () => {
+        const oldMessagesAll = JSON.parse(localStorage.getItem('allMessages')) || [];
+        const shouldShowButton = oldMessagesAll.length > 0 && oldMessagesAll.length >= 6;
+        loadOlderMessagesBtn.style.display = shouldShowButton ? 'block' : 'none';
+    };
+
+    // Call the check function initially and after each update
+    checkLoadOlderMessagesBtn();
+    window.addEventListener('storage', checkLoadOlderMessagesBtn);
 });
 
 
