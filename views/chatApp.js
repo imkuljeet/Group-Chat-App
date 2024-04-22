@@ -25,7 +25,13 @@ window.addEventListener("DOMContentLoaded", () => {
     const fetchNewMessagesAndUpdate = async () => {
         try {
             let lastId = localStorage.getItem('lastMessageId');
+
+            if (lastId === undefined || lastId === 0) {
+                lastId = -1;
+            }
+
             console.log("Last Id is here>>>", lastId);
+            
             let response = await axios.get(`http://localhost:3000/user/get-message-new?lastMessageId=${lastId}`, { headers: { "Authorization": token } });
             console.log("All new Messages are>>>>", response.data.allNewMessages);
             
