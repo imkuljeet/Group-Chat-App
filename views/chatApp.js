@@ -77,6 +77,20 @@ window.addEventListener("DOMContentLoaded", () => {
         }
     };
 
+    const fetchNewMessagesAndUpdate = async () => {
+        try {
+            let lastId = localStorage.getItem('lastMessageId');
+            console.log("Last Id is here>>>", lastId);
+            let newMessages = await axios.get(`http://localhost:3000/user/get-message-new?lastMessageId=${lastId}`, { headers: { "Authorization": token } });
+            console.log("All new Messages are>>>>", newMessages.data); // Access the response data using newMessages.data
+        } catch (error) {
+            console.error('Error fetching or updating messages:', error);
+        }
+    };
+    
+    // Call the API initially
+    fetchNewMessagesAndUpdate();
+
     // Read messages from local storage when the page is refreshed
     readMessagesFromLocalStorage();
 

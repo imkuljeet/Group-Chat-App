@@ -9,6 +9,7 @@ router.post('/signup', userController.signup);
 router.post('/login',userController.login);
 router.post('/message', authorization.authenticate, msgController.postMessage);
 router.get('/get-message', authorization.authenticate, msgController.getMessage);
+router.get('/get-message-new',authorization.authenticate,msgController.getMessageNew);
 
 
 module.exports = router;
