@@ -1,5 +1,6 @@
 const msgInput = document.getElementById('chat');
 const token = localStorage.getItem('token');
+let updateInterval; // Declare updateInterval outside to access it in the event listener
 
 document.getElementById("msgSent").onclick = async function(event) {
     event.preventDefault();
@@ -58,6 +59,9 @@ window.addEventListener("DOMContentLoaded", () => {
     
     fetchNewMessagesAndUpdate(); // Call the API initially
 
+    // Set interval to call fetchNewMessagesAndUpdate every second (1000 milliseconds)
+    updateInterval = setInterval(fetchNewMessagesAndUpdate, 1000);
+
     function showMessage(messages) {
         const parentElement = document.getElementById("listOfMessages");
         parentElement.innerHTML = ""; // Clear previous messages
@@ -74,6 +78,7 @@ window.addEventListener("DOMContentLoaded", () => {
     const loadOlderMessagesBtn = document.getElementById('loadOlderMessagesBtn');
     
     loadOlderMessagesBtn.addEventListener('click', async () => {
+        clearInterval(updateInterval); // Stop the update interval
         try {
             const oldMessagesAll = JSON.parse(localStorage.getItem('allMessages')) || [];
             const firstMessageId = oldMessagesAll.length > 0 ? oldMessagesAll[0].id : null;
