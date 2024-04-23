@@ -52,6 +52,8 @@ window.addEventListener("DOMContentLoaded", () => {
             localStorage.setItem('lastMessageId', lastMessageId);
             localStorage.setItem('allMessages', JSON.stringify(mergedMessages)); // Update allMessages in local storage
             showMessage(mergedMessages);
+            // Check if button should be displayed based on message count after updating messages
+            checkLoadOlderMessagesBtn();
         } catch (error) {
             console.error('Error fetching or updating messages:', error);
         }
@@ -76,21 +78,24 @@ window.addEventListener("DOMContentLoaded", () => {
 
     // Event listener for the "Load Older Messages" button
     const loadOlderMessagesBtn = document.getElementById('loadOlderMessagesBtn');
-    
+    let currentPage = 1; // Track the current page of messages
+
     loadOlderMessagesBtn.addEventListener('click', async () => {
         clearInterval(updateInterval); // Stop the update interval
         try {
             const oldMessagesAll = JSON.parse(localStorage.getItem('allMessages')) || [];
             const firstMessageId = oldMessagesAll.length > 0 ? oldMessagesAll[0].id : null;
-    
+
             if (firstMessageId !== null) {
-                const response = await axios.get(`http://localhost:3000/user/get-older-messages?firstMessageId=${firstMessageId}`, { headers: { "Authorization": token } });
+                const response = await axios.get(`http://localhost:3000/user/get-older-messages?firstMessageId=${firstMessageId}&page=${currentPage}`, { headers: { "Authorization": token } });
                 const olderMessages = response.data.olderMessages;
-    
+
                 if (Array.isArray(olderMessages) && olderMessages.length > 0) {
                     showMessage(olderMessages);
+                    currentPage++; // Increment the current page after fetching messages
                 } else {
                     console.log('No older messages found.');
+                    loadOlderMessagesBtn.style.display = 'none'; // Hide the button if no more older messages
                 }
             } else {
                 console.log('No messages in localStorage.');
@@ -99,6 +104,7 @@ window.addEventListener("DOMContentLoaded", () => {
             console.error('Error fetching or processing older messages:', error);
         }
     });
+
     
     // Check if button should be displayed based on message count
     const checkLoadOlderMessagesBtn = () => {
@@ -108,7 +114,7 @@ window.addEventListener("DOMContentLoaded", () => {
     };
 
     // Call the check function initially and after each update
-    checkLoadOlderMessagesBtn();
+    // checkLoadOlderMessagesBtn();
     window.addEventListener('storage', checkLoadOlderMessagesBtn);
 });
 

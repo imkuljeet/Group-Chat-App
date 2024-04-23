@@ -84,6 +84,12 @@ exports.getOlderMessages = async (req, res) => {
             return res.status(400).json({ error: 'firstMessageId is required in query params' });
         }
 
+        const page = req.query.page || 1; // Extract page number from request query params, default to 1 if not provided
+        const pageSize = 10; // Number of messages per page
+
+        // Calculate the offset based on the page number and page size
+        const offset = (page - 1) * pageSize;
+
         // Query messages from the Message table where id is less than firstMessageId
         const messages = await Message.findAll({
             where: {
@@ -97,8 +103,9 @@ exports.getOlderMessages = async (req, res) => {
                     attributes: ['name']
                 }
             ],
-            order: [['id', 'ASC']], // Order by id in descending order to get older messages
-            limit: 10 // Limit the number of older messages to fetch
+            order: [['id', 'ASC']], // Order by id in ascending order to get older messages
+            offset, // Offset to skip previous messages based on page number
+            limit: pageSize // Limit the number of older messages to fetch per page
         });
         
         // Send the queried older messages as a response
@@ -108,6 +115,5 @@ exports.getOlderMessages = async (req, res) => {
         res.status(500).json({ error: err.message, success: false });
     }
 };
-
 
 
