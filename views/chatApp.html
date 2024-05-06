@@ -9,8 +9,43 @@
 </head>
 <body>
     <h1 class="text-center"> Chat App </h1>
+
+    <div id="group-body" class="d-flex justify-content-start m-4">
+        <div id="group-header" class="bg-info">
+            <label class="font-monospace ">Create a New Group</label>
+            <button id="new-group-btn" class="btn btn-secondary btn-group-sm">New group</button>
+            <div id="chat-list" class="bg-light">
+            </div>
+        </div> 
+    </div>
+    <div class="container" id="chat-body">
+        <div id="open-chat">
+        </div>
+        <!-- <div class="hide">Click to see members</div> -->
+        <div id="chat-ul">
+        </div>
+    </div>
+    <div id="members-list">
+        <!--  <button id="close-members-btn">X</button> -->
+        <ul id="members-ul">
+        </ul>
+    </div>
+    <a href="./login.html">
+        <u class="btn btn-danger gradient-custom-4">Logout</u>
+    </a>
+    <footer class="fixed-bottom mb-5 d-flex justify-content-around bg-info">
+        <div class="input-group">
+            <form id="chat-form" class="form-control">
+                <input type="text" id="message" class="form-control">
+                <input type="hidden" id="username" class="form-control">
+                <button class="btn btn-primary btn-block" id="msgSent" type="submit">Send</button>
+            </form>
+        </div>
+    </footer>
+
+    <!-- ----------------------------------------------------------------------------------------------------------- -->
     
-    <div class="input-group">
+    <!-- <div class="input-group">
         <input type="text" id="chat" class="form-control">
         <div class="input-group-append">
             <button class="btn btn-primary btn-block" id="msgSent" type="submit">Send</button>
@@ -18,7 +53,7 @@
     </div>
     <a href="./login.html">
         Logout
-    </a>
+    </a> -->
 
     <h3> Messages </h3>
     

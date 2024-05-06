@@ -1,15 +1,16 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../util/database');
 
-const Message = sequelize.define('message', {
+const Group = sequelize.define('group', {
     id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         allowNull: false,
-        primaryKey: true
+        primaryKey: true,
     },
-    message: Sequelize.STRING,
-    username: Sequelize.STRING,
-})
+    name: {
+        type: Sequelize.STRING
+    }
+});
 
-module.exports = Message
+module.exports = Group;
