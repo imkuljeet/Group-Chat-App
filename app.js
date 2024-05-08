@@ -1,20 +1,31 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+require('dotenv').config();
 
 const sequelize = require("./util/database");
+// const http = require('http');
+// const socketio = require('socket.io');
+const {Server} = require("socket.io");
+const {createServer} = require("http");
+
 const User = require("./models/users");
 const Message = require('./models/messages');
 const Group = require('./models/group');
 const GroupUser = require('./models/groupUser');
 
-const userController = require("./controllers/user");
 const userRoutes = require("./routes/user");
 const chatRoutes = require('./routes/chat');
 const adminRoutes = require('./routes/admin');
 const messageRoutes = require('./routes/messages');
 
 const app = express();
+const server = createServer(app);
+const io = new Server(server,{
+  cors : {
+    origin:"*"
+  }
+})
 
 app.use(cors({
   origin : "*",
@@ -43,11 +54,22 @@ Message.belongsTo(Group);
 
 
 
-sequelize
-  .sync()
-  .then((result) => {
-    app.listen(3000);
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+sequelize.sync()
+.then(() => {
+    server.listen(3000, () => {
+        console.log('server is listening')
+    })
+    io.on('connection', (socket) => {
+        console.log('user connected');
+        socket.on('send-message', (msg,id) => {
+            console.log('groupId :',id);
+            console.log('Received message:',msg);
+            io.emit('receivedMsg', id);
+        })
+        socket.on('disconnect', () => {
+            console.log('user disconnected');
+        })
+    })
+})
+.catch(error => console.log("error in appjs file"));
+
