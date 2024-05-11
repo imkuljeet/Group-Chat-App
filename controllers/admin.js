@@ -41,7 +41,7 @@ exports.makeAdmin = async (req,res,next) => {
         if(!user) {
             return res.status(400).json({message: 'Member to be Added is Not Registered'});
         }
-        const verifiedAdmin = await GroupUser.findOne({where: {[Op.and]: [{userId: req.user.id}, {isAdmin: false}, {groupId: groupId}]}});
+        const verifiedAdmin = await GroupUser.findOne({where: {[Op.and]: [{userId: req.user.id}, {isAdmin: true}, {groupId: groupId}]}});
         if(!verifiedAdmin){
             return res.status(403).json({message: 'You Do Not Have Permission'});
         };
