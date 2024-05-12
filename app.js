@@ -3,6 +3,11 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 require('dotenv').config();
 
+const multer = require('multer');
+const upload = multer();
+
+const CronJob = require('cron').CronJob;
+
 const sequelize = require("./util/database");
 // const http = require('http');
 // const socketio = require('socket.io');
@@ -13,11 +18,14 @@ const User = require("./models/users");
 const Message = require('./models/messages');
 const Group = require('./models/group');
 const GroupUser = require('./models/groupUser');
+const StoredFile = require('./models/groupfiles');
+const Archieve = require('./models/archieve-chat');
 
 const userRoutes = require("./routes/user");
 const chatRoutes = require('./routes/chat');
 const adminRoutes = require('./routes/admin');
 const messageRoutes = require('./routes/messages');
+const fileRoutes = require('./routes/group-files');
 
 const app = express();
 const server = createServer(app);
@@ -39,6 +47,12 @@ app.use('/user', userRoutes);
 app.use('/message', messageRoutes);
 app.use('/chat', chatRoutes);
 app.use('/admin', adminRoutes);
+app.use('/file', upload.single('myfile'), fileRoutes)
+
+app.use('/', (req, res) => {
+    res.sendFile(path.join(__dirname, `${req.url}`));
+});
+
 
 
 
@@ -51,7 +65,7 @@ User.belongsToMany(Group, {through: GroupUser});
 Group.hasMany(Message);
 Message.belongsTo(Group);
 
-
+Group.hasMany(StoredFile);
 
 
 sequelize.sync()
@@ -70,6 +84,18 @@ sequelize.sync()
             console.log('user disconnected');
         })
     })
+    new CronJob('0 0 * * *', async function() {
+        const chats = await Message.findAll();
+        console.log('daily chat',chats);
+
+        for(const chat of chats) {
+            await Archieve.create({ groupId: chat.groupId, userId: chat.userId, message: chat.message })
+            console.log('id',chat.id)
+            await Message.destroy({where: {id: chat.id} })
+        }
+    },
+    null,
+    true,
+    )
 })
 .catch(error => console.log("error in appjs file"));
-
