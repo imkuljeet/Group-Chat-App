@@ -368,18 +368,19 @@ async function removeAdminPermission(idString) {
 }
 
 const fileInput = document.getElementById('myfile');
+
 fileInput.addEventListener('input', handleSelectedFile = async(event) => {
     try {
         const file = event.target.files[0]; 
-        console.log('files**********',file);
+        // console.log('files**********',file);
 
         const formData = new FormData();
         formData.append('myfile', file)
 
-        console.log('formData', formData.get('myfile'))
+        // console.log('formData', formData.get('myfile'))
 
         const groupId = localStorage.getItem('groupId');
-        console.log('groupId inside files',groupId)
+        // console.log('groupId inside files',groupId)
 
         const token = localStorage.getItem('token');
         const fileStored = await axios.post(`http://localhost:3000/file/filestored/${groupId}`, formData, 
@@ -389,14 +390,16 @@ fileInput.addEventListener('input', handleSelectedFile = async(event) => {
             }
         })
 
-        console.log('file name', fileStored.data.fileName);
-        console.log('data message file', fileStored.data.msg.message);
+        console.log("This is file storage", fileStored);
+        // console.log('file name', fileStored.data.fileName);
+        // console.log('data message file', fileStored.data.msg.message);
 
-        document.getElementById('text').value = fileStored.data.msg.message;  
+        // document.getElementById('text').value = fileStored.data.message;  
+        // console.log("Inside file", fileStored.data.msg.message);
 
-        socket.emit('message',fileStored.data.msg.message);   
+        socket.emit("send-message",fileStored.data.message, groupId);   
     }
     catch(err) {
-        console.log("Some error in files", error);
+        console.log("Some error in files", err);
     }
 })

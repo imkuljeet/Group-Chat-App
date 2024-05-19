@@ -15,7 +15,9 @@ exports.downloadFiles = async(req,res,next) => {
 
         const abc = await GroupFiles.create({url: fileUrl, groupId: groupId});
         const msg = await Message.create({message: fileUrl, username: name, userId: id, groupId: groupId})
-        res.status(200);
+        // console.log(abc);
+        // console.log(msg);
+        res.status(200).json({message: fileUrl});
     }
     catch(err){
         console.log(err);
