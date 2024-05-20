@@ -20,12 +20,14 @@ const Group = require('./models/group');
 const GroupUser = require('./models/groupUser');
 const StoredFile = require('./models/groupfiles');
 const Archieve = require('./models/archieve-chat');
+const Forgotpassword = require('./models/forgotpassword');
 
 const userRoutes = require("./routes/user");
 const chatRoutes = require('./routes/chat');
 const adminRoutes = require('./routes/admin');
 const messageRoutes = require('./routes/messages');
 const fileRoutes = require('./routes/group-files');
+const resetPasswordRoutes = require('./routes/resetpassword')
 
 const app = express();
 const server = createServer(app);
@@ -48,6 +50,9 @@ app.use('/message', messageRoutes);
 app.use('/chat', chatRoutes);
 app.use('/admin', adminRoutes);
 app.use('/file', upload.single('myfile'), fileRoutes)
+app.use('/password', resetPasswordRoutes);
+
+
 
 app.use('/', (req, res) => {
     res.sendFile(path.join(__dirname, `${req.url}`));
@@ -66,6 +71,9 @@ Group.hasMany(Message);
 Message.belongsTo(Group);
 
 Group.hasMany(StoredFile);
+
+User.hasMany(Forgotpassword);
+Forgotpassword.belongsTo(User);
 
 
 sequelize.sync()
