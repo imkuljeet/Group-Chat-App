@@ -28,7 +28,8 @@ const chatRoutes = require('./routes/chat');
 const adminRoutes = require('./routes/admin');
 const messageRoutes = require('./routes/messages');
 const fileRoutes = require('./routes/group-files');
-const resetPasswordRoutes = require('./routes/resetpassword')
+const resetPasswordRoutes = require('./routes/resetpassword');
+const mainRoute = require('./routes/main');
 
 const app = express();
 // const server = http.createServer(app);
@@ -48,7 +49,9 @@ app.use(cors({
 }));
 
 app.use(bodyParser.json());
+app.use(express.static('public'));
 
+app.use(mainRoute);
 app.use('/user', userRoutes);
 app.use('/message', messageRoutes);
 app.use('/chat', chatRoutes);
@@ -56,11 +59,13 @@ app.use('/admin', adminRoutes);
 app.use('/file', upload.single('myfile'), fileRoutes)
 app.use('/password', resetPasswordRoutes);
 
-
-
-app.use('/', (req, res) => {
-    res.sendFile(path.join(__dirname, `${req.url}`));
+app.use((req, res) => {
+    res.status(404).sendFile('404.html', { root: 'views' });
 });
+
+// app.use('/', (req, res) => {
+//     res.sendFile(path.join(__dirname, `${req.url}`));
+// });
 
 
 
