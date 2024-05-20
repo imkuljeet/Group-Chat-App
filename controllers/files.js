@@ -11,7 +11,7 @@ exports.downloadFiles = async(req,res,next) => {
         const fileName = `${req.file.originalname}`
 
         const fileUrl = await S3Service.uploadToS3(file, fileName);
-        console.log("fileUrl",fileUrl);
+        // console.log("fileUrl",fileUrl);
 
         const abc = await GroupFiles.create({url: fileUrl, groupId: groupId});
         const msg = await Message.create({message: fileUrl, username: name, userId: id, groupId: groupId})

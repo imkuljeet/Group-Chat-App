@@ -15,7 +15,7 @@ exports.saveMessage = async(req,res,next) => {
     try {
         const message = req.body.message;
         const groupId = req.body.groupId;
-        console.log(message);
+        // console.log(message);
         if(isValidMessage(message)) {
             const groupUser = await GroupUser.findOne({where: {
                 groupId: groupId,

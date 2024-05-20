@@ -15,6 +15,7 @@ async function signup(e) {
   
       if (response.status === 201) {
         alert('Successfully Signed Up');
+        localStorage.clear();
 
         window.location.href = "./login.html";
       } else {

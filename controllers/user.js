@@ -17,7 +17,7 @@ function generateAccessToken(id, name) {
 const signup = async (req, res, next) => {
   try {
     const { name, email, phone, password } = req.body;
-    console.log("Email is", email);
+    // console.log("Email is", email);
 
     if (
       isStringInvalid(name) ||

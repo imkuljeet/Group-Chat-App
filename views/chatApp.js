@@ -6,12 +6,15 @@ const chatList = document.getElementById('chat-list');
 
 const chatForm = document.getElementById('chat-form');
 const openChat = document.getElementById('open-chat');
-// const closeMembersBtn = document.getElementById('close-members-btn');
+
 const membersUl = document.getElementById('members-ul');
 const closeMembersBtn = document.getElementById('close-members-btn');
 
 const baseUrl = `http://localhost:3000`;
 
+document.getElementById('logout-btn').addEventListener('click', function() {
+    localStorage.clear();
+});
 
 let updateInterval; // Declare updateInterval outside to access it in the event listener
 
@@ -111,7 +114,6 @@ function showChatToUser(messages) {
                 <p>
                     ${message.username}: ${message.message}
                 </p>
-                <br>
             `;
 
         });

@@ -62,9 +62,9 @@ exports.getGroups = async(req,res,next) => {
 exports.getMembers = async(req,res,next) => {
     try {
         const groupId = +req.query.groupId;
-        console.log(groupId);
+        // console.log(groupId);
         const members = await GroupUser.findAll({where: {groupId: groupId}})
-        console.log(members);
+        // console.log(members);
         let membersToSend = [];
         for(let i = 0; i < members.length; i++) {
             const user = await User.findByPk(members[i].userId)
@@ -77,8 +77,8 @@ exports.getMembers = async(req,res,next) => {
                     ...newPart
                 }
                 membersToSend.push(userToSend);
-                console.log("chat file newPart", newPart);
-                console.log("chat file useringroup",userInGroupUser);
+                // console.log("chat file newPart", newPart);
+                // console.log("chat file useringroup",userInGroupUser);
             }
         }
         res.status(200).json({members: membersToSend});

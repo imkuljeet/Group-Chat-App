@@ -14,6 +14,7 @@ async function login(e){
         console.log(response);
 
         if(response.status == 200) {
+            localStorage.clear();
             alert(response.data.message);
             localStorage.setItem('token',response.data.token);
             window.location.href = "./chatApp.html";

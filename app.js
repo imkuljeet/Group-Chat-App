@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const path = require('path');
 require('dotenv').config();
 
 const multer = require('multer');
@@ -30,6 +31,9 @@ const fileRoutes = require('./routes/group-files');
 const resetPasswordRoutes = require('./routes/resetpassword')
 
 const app = express();
+// const server = http.createServer(app);
+// const io = socketio(server);
+
 const server = createServer(app);
 const io = new Server(server,{
   cors : {
@@ -57,7 +61,6 @@ app.use('/password', resetPasswordRoutes);
 app.use('/', (req, res) => {
     res.sendFile(path.join(__dirname, `${req.url}`));
 });
-
 
 
 
