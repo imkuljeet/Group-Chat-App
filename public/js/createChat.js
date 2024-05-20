@@ -3,7 +3,7 @@ document.getElementById('new-chat-form').onsubmit = async(e) => {
     try {
         const token = localStorage.getItem('token');
         const participantEmail = document.getElementById('chat-mate-email').value;
-        const res = await axios.post(`http://localhost:3000/chat/addParticipant`, {
+        const res = await axios.post(`chat/addParticipant`, {
             email: participantEmail
         },
         {

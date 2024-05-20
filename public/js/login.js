@@ -9,7 +9,7 @@ async function login(e){
 
         console.log(loginDetails);
 
-        const response = await axios.post('http://localhost:3000/user/login',loginDetails);
+        const response = await axios.post('user/login',loginDetails);
 
         console.log(response);
 

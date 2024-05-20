@@ -42,7 +42,7 @@ chatForm.onsubmit = async (e) => {
             return document.getElementById('message').value = '';
             // throw new Error('no group selected');
         }
-        const res = await axios.post(`http://localhost:3000/message/send`, 
+        const res = await axios.post(`message/send`, 
         {
             message: message,
             groupId: groupId
@@ -77,7 +77,7 @@ async function fetchMessagesAndShowToUser(groupId) {
             messages = oldMessages;
             lastMsgId = oldMessages[oldMessages.length - 1].id;
         }
-        const res = await axios.get(`http://localhost:3000/message/fetchNewMsgs/?lastMsgId=${lastMsgId}&groupId=${groupId}`);
+        const res = await axios.get(`message/fetchNewMsgs/?lastMsgId=${lastMsgId}&groupId=${groupId}`);
         if(res.status === 200){
             console.log("Inside this fetch", groupId);
             // console.log("Inside this fetch", intervalId);
@@ -131,7 +131,7 @@ newGroupBtn.onclick = async (e) => {
 async function fetchGroupsAndShowToUser() {
     try {
         const token = localStorage.getItem('token');
-        const res = await axios.get(`http://localhost:3000/chat/getGroups`, {
+        const res = await axios.get(`chat/getGroups`, {
             headers: {
                 'Authorization': token
             }
@@ -234,7 +234,7 @@ openChat.onclick = (e) => {
 async function fetchMembersAndShowToUser(groupId) {
     try {
         const token = localStorage.getItem('token');
-        const res = await axios.get(`http://localhost:3000/chat/getMembers/?groupId=${groupId}`, {
+        const res = await axios.get(`chat/getMembers/?groupId=${groupId}`, {
             headers: {
                 'Authorization': token
             }
@@ -299,7 +299,7 @@ async function makeAdmin(idString) {
         const userId = idString.split('-')[1];
         const token = localStorage.getItem('token');
         const groupId = localStorage.getItem('groupId');
-        const res = await axios.put(`http://localhost:3000/admin/makeAdmin`, {userId: userId, groupId: groupId}, {
+        const res = await axios.put(`admin/makeAdmin`, {userId: userId, groupId: groupId}, {
             headers: {
                 'Authorization': token
             }
@@ -330,7 +330,7 @@ async function removeMember(idString) {
             },
             data: {userId: userId, groupId: groupId}
         }
-        const res = await axios.delete(`http://localhost:3000/admin/removeFromGroup`, config)
+        const res = await axios.delete(`admin/removeFromGroup`, config)
         if(res.status === 200) {
             console.log('removing user response:', res);
             confirm(res.data.message);
@@ -350,7 +350,7 @@ async function removeAdminPermission(idString) {
         const userId = idString.split('-')[1];
         const token = localStorage.getItem('token');
         const groupId = localStorage.getItem('groupId');
-        const res = await axios.put(`http://localhost:3000/admin/removeAdmin`, {userId: userId, groupId: groupId}, {
+        const res = await axios.put(`admin/removeAdmin`, {userId: userId, groupId: groupId}, {
             headers: {
                 'Authorization': token
             }
@@ -385,7 +385,7 @@ fileInput.addEventListener('input', handleSelectedFile = async(event) => {
         // console.log('groupId inside files',groupId)
 
         const token = localStorage.getItem('token');
-        const fileStored = await axios.post(`http://localhost:3000/file/filestored/${groupId}`, formData, 
+        const fileStored = await axios.post(`file/filestored/${groupId}`, formData, 
         {
             headers: {
                 'Authorization': token

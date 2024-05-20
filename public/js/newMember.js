@@ -4,7 +4,7 @@ document.getElementById('add-member-form').onsubmit = async(e) => {
         const groupId = sessionStorage.getItem('addToGroup');
         const token = localStorage.getItem('token');
         const email = document.getElementById('email').value;
-        let res = await axios.post("http://localhost:3000/admin/addUser", {
+        let res = await axios.post("admin/addUser", {
             groupId: groupId,
             email: email
         },

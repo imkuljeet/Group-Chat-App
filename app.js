@@ -86,8 +86,8 @@ Forgotpassword.belongsTo(User);
 
 sequelize.sync()
 .then(() => {
-    server.listen(3000, () => {
-        console.log('server is listening')
+    server.listen(process.env.PORT, () => {
+        console.log(`Server is ruuning at ${process.env.PORT}`)
     })
     io.on('connection', (socket) => {
         console.log('user connected');
