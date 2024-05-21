@@ -104,24 +104,48 @@ async function fetchMessagesAndShowToUser(groupId) {
     }
 }
 
+// function showChatToUser(messages) {
+//     try {
+//         const chatul = document.getElementById('chat-ul');
+//         chatul.innerHTML = '';
+//         messages.forEach((message) => {
+//             // chatBody.innerHTML += message.from+': '+ message.message + `<br>`;
+//             chatul.innerHTML += `
+//                 <p>
+//                     ${message.username}: ${message.message}
+//                 </p>
+//             `;
+
+//         });
+//     }
+//     catch (error) {
+//         console.log(error);
+//     }
+// }
+
 function showChatToUser(messages) {
     try {
         const chatul = document.getElementById('chat-ul');
         chatul.innerHTML = '';
+        
+        // Regular expression to detect URLs
+        const urlPattern = /(https?:\/\/[^\s]+)/g;
+        
         messages.forEach((message) => {
-            // chatBody.innerHTML += message.from+': '+ message.message + `<br>`;
+            // Replace URLs in the message with anchor tags
+            const formattedMessage = message.message.replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
+            
             chatul.innerHTML += `
                 <p>
-                    ${message.username}: ${message.message}
+                    ${message.username}: ${formattedMessage}
                 </p>
             `;
-
         });
-    }
-    catch (error) {
+    } catch (error) {
         console.log(error);
     }
 }
+
 
 
 newGroupBtn.onclick = async (e) => {
