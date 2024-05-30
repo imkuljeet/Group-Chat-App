@@ -41,19 +41,23 @@ exports.saveMessage = async(req,res,next) => {
     }
 }
 
-exports.fetchNewMessages = async (req,res,next) => {
+exports.fetchNewMessages = async (req, res, next) => {
     try {
-        const lastMsgId = +req.query.lastMsgId;
+        const lastMsgId = +req.query.lastMsgId; //from string to integer conversion we use +
         const groupId = +req.query.groupId;
-        const messages = await Message.findAll({where: {id:  {[Op.gt]: lastMsgId}}});
-        if(messages.length > 0) {
-            res.status(200).json({messages: messages});
+        const messages = await Message.findAll({
+            where: {
+                id: { [Op.gt]: lastMsgId },
+                groupId: groupId
+            }
+        });
+        if (messages.length > 0) {
+            res.status(200).json({ messages: messages });
         } else {
-            res.status(201).json({message: 'no new messages'});
+            res.status(201).json({ message: 'no new messages' });
         }
-    }
-    catch (error) {
+    } catch (error) {
         console.log(error);
-        res.status(500).json({message: 'could not fetch messages'});
+        res.status(500).json({ message: 'could not fetch messages' });
     }
-}
+};

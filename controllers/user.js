@@ -11,7 +11,7 @@ function isStringInvalid(string) {
 }
 
 function generateAccessToken(id, name) {
-  return jwt.sign({userId: id, name}, 'secretkey');
+  return jwt.sign({userId: id, name}, process.env.SECRET_KEY);
 }
 
 const signup = async (req, res, next) => {

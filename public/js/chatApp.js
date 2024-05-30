@@ -31,6 +31,8 @@ socket.on('receivedMsg', (id) => {
     fetchMessagesAndShowToUser(id);
 })
 
+// --------------------------------------------------------------------------------------------------------------------
+
 chatForm.onsubmit = async (e) => {
     e.preventDefault();
     try {
