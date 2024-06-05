@@ -11,53 +11,61 @@ function isValidMessage(message) {
     }
 }
 
-exports.saveMessage = async(req,res,next) => {
+exports.saveMessage = async (req, res, next) => {
     try {
-        const message = req.body.message;
-        const groupId = req.body.groupId;
-        // console.log(message);
-        if(isValidMessage(message)) {
-            const groupUser = await GroupUser.findOne({where: {
-                groupId: groupId,
+        const { message, groupId } = req.body;
+
+        // Validate the message
+        if (!isValidMessage(message)) {
+            return res.status(400).json({ message: 'Invalid message format' });
+        }
+
+        // Check if the user is part of the group
+        const groupUser = await GroupUser.findOne({
+            where: {
+                groupId,
                 userId: req.user.id
-            }})
-            if(!groupUser) {
-                throw new Error('user not found in group');
             }
-            await req.user.createMessage({
-                message: message,
-                groupId: groupId,
-                username: req.user.name
-            });
-            res.status(200).json({message: 'msg saved to database'});
+        });
+        if (!groupUser) {
+            return res.status(403).json({ message: 'User not found in group' });
         }
-        else {
-            throw new Error('invalid message format');
-        }
+
+        // Save the message to the database
+        await req.user.createMessage({
+            message,
+            groupId,
+            username: req.user.name
+        });
+
+        res.status(200).json({ message: 'Message saved to database' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Something went wrong' });
     }
-    catch (error) {
-        console.log(error);
-        res.status(500).json({message: 'something went wrong'});
-    }
-}
+};
 
 exports.fetchNewMessages = async (req, res, next) => {
     try {
-        const lastMsgId = +req.query.lastMsgId; //from string to integer conversion we use +
+        const lastMsgId = +req.query.lastMsgId; // Convert string to integer
         const groupId = +req.query.groupId;
+
+        // Fetch new messages
         const messages = await Message.findAll({
             where: {
                 id: { [Op.gt]: lastMsgId },
-                groupId: groupId
+                groupId
             }
         });
+
         if (messages.length > 0) {
-            res.status(200).json({ messages: messages });
+            res.status(200).json({ messages });
         } else {
-            res.status(201).json({ message: 'no new messages' });
+            res.status(201).json({ message: 'No new messages' });
         }
     } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: 'could not fetch messages' });
+        console.error(error);
+        res.status(500).json({ message: 'Could not fetch messages' });
     }
 };
+

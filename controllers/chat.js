@@ -3,61 +3,72 @@ const Group = require('../models/group');
 const { Op } = require('sequelize');
 const GroupUser = require('../models/groupUser');
 
-exports.addParticipant = async(req,res,next) => {
+exports.addParticipant = async (req, res, next) => {
     try {
-        const email = req.body.email;
-        let user = await User.findOne({where: {email: email}});
-        if(!user) {
-            return res.status(204).json({message: 'email is not registered'});
+        const { email } = req.body;
+
+        // Find the user by email
+        let user = await User.findOne({ where: { email } });
+        if (!user) {
+            return res.status(204).json({ message: 'Email is not registered' });
         }
+
+        // Create a new group and add the requesting user as an admin
         const newGroup = await req.user.createGroup();
         await newGroup.addUser(req.user, {
-            through: {isAdmin: true}
+            through: { isAdmin: true }
         });
+
+        // Uncomment the following lines if you want to add the user to the group
         // await newGroup.addUser(user, {
-        //     through: {isAdmin: false}
+        //     through: { isAdmin: false }
         // });
-        res.status(200).json({group: newGroup, message: 'added new user to group'})
-    }
-    catch(error) {
-        console.log(error);
-        res.status(500).json({message: 'something went wrong'});
-    }
-}
 
-exports.setGroupName = async(req,res,next) => {
+        res.status(200).json({ group: newGroup, message: 'Added new user to group' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Something went wrong' });
+    }
+};
+
+exports.setGroupName = async (req, res, next) => {
     try {
-        const groupName = req.body.groupname;
-        const groupId = req.body.groupid;
-        if(groupName.length > 0 && typeof groupName === 'string') {
-            const group = await Group.findByPk(groupId);
-            await group.update({name: groupName});
-            res.status(200).json({message: 'group name updated'});
-        }
-        else {
-            throw new Error('invalid group name');
-        }
-    }
-    catch(error) {
-        console.log(error);
-        res.status(500).json({message: 'something went wrong'});
-    }
-}
+        const { groupname, groupid } = req.body;
 
-exports.getGroups = async(req,res,next) => {
+        // Validate the group name
+        if (typeof groupname !== 'string' || groupname.trim().length === 0) {
+            return res.status(400).json({ message: 'Invalid group name' });
+        }
+
+        // Find the group by ID and update the name
+        const group = await Group.findByPk(groupid);
+        if (!group) {
+            return res.status(404).json({ message: 'Group not found' });
+        }
+
+        await group.update({ name: groupname });
+
+        res.status(200).json({ message: 'Group name updated' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Something went wrong' });
+    }
+};
+
+exports.getGroups = async (req, res, next) => {
     try {
         const groups = await req.user.getGroups();
-        // console.log(groups);
-        if(groups.length === 0) {
-            return res.status(201).json({message: 'no groups currently'})
+
+        if (groups.length === 0) {
+            return res.status(200).json({ message: 'No groups currently' });
         }
-        res.status(200).json({groups: groups});
+
+        res.status(200).json({ groups });
+    } catch (error) {
+        console.error("Backend catch error", error);
+        res.status(500).json({ message: 'Something went wrong' });
     }
-    catch(error) {
-        console.log("backend catch error")
-        res.status(500).json({message: 'something went wrong'});
-    }
-}
+};
 
 exports.getMembers = async(req,res,next) => {
     try {

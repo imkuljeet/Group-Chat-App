@@ -2,25 +2,20 @@ const S3Service = require('../services/S3services');
 const GroupFiles = require('../models/groupfiles');
 const Message = require('../models/messages');
 
-exports.downloadFiles = async(req,res,next) => {
+exports.downloadFiles = async (req, res, next) => {
     try {
-        const file = req.file.buffer;
-        const id = req.user.dataValues.id;
-        const name = req.user.dataValues.name;
-        const groupId = req.params.groupId;
-        const fileName = `${req.file.originalname}`
+        const { buffer: file, originalname: fileName } = req.file;
+        const { id, name } = req.user.dataValues;
+        const { groupId } = req.params;
 
         const fileUrl = await S3Service.uploadToS3(file, fileName);
-        // console.log("fileUrl",fileUrl);
 
-        const abc = await GroupFiles.create({url: fileUrl, groupId: groupId});
-        const msg = await Message.create({message: fileUrl, username: name, userId: id, groupId: groupId})
-        // console.log(abc);
-        // console.log(msg);
-        res.status(200).json({message: fileUrl});
+        await GroupFiles.create({ url: fileUrl, groupId });
+        await Message.create({ message: fileUrl, username: name, userId: id, groupId });
+
+        res.status(200).json({ message: fileUrl });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ fileUrl: '', success: false, err });
     }
-    catch(err){
-        console.log(err);
-        res.status(500).json({fileUrl:'',success:false,err:err});
-    }   
-}
+};

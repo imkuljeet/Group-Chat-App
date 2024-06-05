@@ -3,18 +3,12 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const path = require('path');
 require('dotenv').config();
-
 const multer = require('multer');
-const upload = multer();
-
-const CronJob = require('cron').CronJob;
+const { CronJob } = require('cron');
+const { createServer } = require("http");
+const { Server } = require("socket.io");
 
 const sequelize = require("./util/database");
-// const http = require('http');
-// const socketio = require('socket.io');
-const {Server} = require("socket.io");
-const {createServer} = require("http");
-
 const User = require("./models/users");
 const Message = require('./models/messages');
 const Group = require('./models/group');
@@ -32,86 +26,71 @@ const resetPasswordRoutes = require('./routes/resetpassword');
 const mainRoute = require('./routes/main');
 
 const app = express();
-// const server = http.createServer(app);
-// const io = socketio(server);
-
+const upload = multer();
 const server = createServer(app);
-const io = new Server(server,{
-  cors : {
-    origin:"*"
+const io = new Server(server, {
+  cors: {
+    origin: "*"
   }
-})
+});
 
-app.use(cors({
-  origin : "*",
-  // methods : ["GET","POST"],
-  // credentials : true
-}));
-
+// Middleware
+app.use(cors({ origin: "*" }));
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
+// Routes
 app.use(mainRoute);
 app.use('/user', userRoutes);
 app.use('/message', messageRoutes);
 app.use('/chat', chatRoutes);
 app.use('/admin', adminRoutes);
-app.use('/file', upload.single('myfile'), fileRoutes)
+app.use('/file', upload.single('myfile'), fileRoutes);
 app.use('/password', resetPasswordRoutes);
 
+// 404 Handler
 app.use((req, res) => {
-    res.status(404).sendFile('404.html', { root: 'views' });
+  res.status(404).sendFile('404.html', { root: 'views' });
 });
 
-// app.use('/', (req, res) => {
-//     res.sendFile(path.join(__dirname, `${req.url}`));
-// });
-
-
-
+// Database Relations
 User.hasMany(Message);
 Message.belongsTo(User);
-
-Group.belongsToMany(User, {through: GroupUser});
-User.belongsToMany(Group, {through: GroupUser});
-
+Group.belongsToMany(User, { through: GroupUser });
+User.belongsToMany(Group, { through: GroupUser });
 Group.hasMany(Message);
 Message.belongsTo(Group);
-
 Group.hasMany(StoredFile);
-
 User.hasMany(Forgotpassword);
 Forgotpassword.belongsTo(User);
 
-
+// Server Initialization
 sequelize.sync()
-.then(() => {
+  .then(() => {
     server.listen(process.env.PORT, () => {
-        console.log(`Server is ruuning at ${process.env.PORT}`)
-    })
-    io.on('connection', (socket) => {
-        console.log('user connected');
-        socket.on('send-message', (msg,id) => {
-            console.log('groupId :',id);
-            console.log('Received message:',msg);
-            io.emit('receivedMsg', id);
-        })
-        socket.on('disconnect', () => {
-            console.log('user disconnected');
-        })
-    })
-    new CronJob('0 0 * * *', async function() {
-        const chats = await Message.findAll();
-        console.log('daily chat',chats);
+      console.log(`Server is running at ${process.env.PORT}`);
+    });
 
-        for(const chat of chats) {
-            await Archieve.create({ groupId: chat.groupId, userId: chat.userId, message: chat.message })
-            console.log('id',chat.id)
-            await Message.destroy({where: {id: chat.id} })
-        }
-    },
-    null,
-    true,
-    )
-})
-.catch(error => console.log("error in appjs file"));
+    io.on('connection', (socket) => {
+      console.log('user connected');
+      socket.on('send-message', (msg, id) => {
+        console.log('groupId:', id);
+        console.log('Received message:', msg);
+        io.emit('receivedMsg', id);
+      });
+      socket.on('disconnect', () => {
+        console.log('user disconnected');
+      });
+    });
+
+    new CronJob('0 0 * * *', async function () {
+      const chats = await Message.findAll();
+      console.log('daily chat', chats);
+
+      for (const chat of chats) {
+        await Archieve.create({ groupId: chat.groupId, userId: chat.userId, message: chat.message });
+        await Message.destroy({ where: { id: chat.id } });
+      }
+    }, null, true);
+  })
+  .catch(error => console.log("Error in app.js file:", error));
